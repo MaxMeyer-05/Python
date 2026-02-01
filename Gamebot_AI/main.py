@@ -1,3 +1,4 @@
+from difflib import get_close_matches
 from tictactoe import TicTacToe
 from connectFour import ConnectFour
 from ai import get_best_move
@@ -46,19 +47,25 @@ def main():
     """
     Main menu to select the game and start the loop.
     """
-    print("--- Python AI Games Collection ---")
-    print("1: Tic Tac Toe (Solved game)")
-    print("2: Connect Four (Strategic game)")
-    choice = input("Select a game (1/2): ")
+    print("--- Universal AI Interface ---")
+    print("Available: Tic Tac Toe, Connect Four, Math Solver")
+    
+    apps = {
+        "tic tac toe": lambda: play_loop(TicTacToe(), 9),
+        "connect four": lambda: play_loop(ConnectFour(), 5)
+    }
 
-    if choice == "1":
-        # Tic Tac Toe is small enough to calculate the full tree (9 moves)
-        play_loop(TicTacToe(), 9)
-    elif choice == "2":
-        # Search depth 5 provides a strong opponent without long wait times
-        play_loop(ConnectFour(), 5)
+    user_choice = input("What's on your mind? ").lower()
+    
+    # Fuzzy matching for robustness
+    matches = get_close_matches(user_choice, list(apps.keys()), n=1, cutoff=0.4)
+
+    if matches:
+        selected_app = matches[0]
+        print(f"--- Launching {selected_app.upper()} ---")
+        apps[selected_app]()
     else:
-        print("Invalid choice. Please restart.")
+        print("Sorry, I don't know how to do that yet.")
 
 if __name__ == "__main__":
     main()

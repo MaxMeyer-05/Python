@@ -1,3 +1,5 @@
+import config
+
 class ConnectFour:
     """
     Represents a Connect Four game on a 6x7 grid.
@@ -69,4 +71,4 @@ class ConnectFour:
         """
         Checks if there are no moves left and no winner.
         """
-        return not self.available_moves() and not self.check_winner("X") and not self.check_winner("O")
+        return not self.available_moves() and not self.check_winner(config.USER) and not self.check_winner(config.AI)

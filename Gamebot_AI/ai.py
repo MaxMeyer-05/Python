@@ -1,4 +1,5 @@
 import math
+import config
 
 def minimax(game, depth, alpha, beta, is_maximizing):
     """
@@ -8,14 +9,14 @@ def minimax(game, depth, alpha, beta, is_maximizing):
     is_maximizing: True if it's the AI's turn to maximize score.
     """
     # Base cases: Check for terminal states (win/loss/draw)
-    if game.check_winner("O"): return 1000 + depth
-    if game.check_winner("X"): return -1000 - depth
+    if game.check_winner(config.AI): return 1000 + depth
+    if game.check_winner(config.USER): return -1000 - depth
     if game.is_draw() or depth == 0: return 0
 
     if is_maximizing:
         max_eval = -math.inf
         for move in game.available_moves():
-            game.make_move(move, "O")
+            game.make_move(move, config.AI)
             evaluation = minimax(game, depth - 1, alpha, beta, False)
             game.undo_move(move) # Backtrack
             max_eval = max(max_eval, evaluation)
@@ -25,7 +26,7 @@ def minimax(game, depth, alpha, beta, is_maximizing):
     else:
         min_eval = math.inf
         for move in game.available_moves():
-            game.make_move(move, "X")
+            game.make_move(move, config.USER)
             evaluation = minimax(game, depth - 1, alpha, beta, True)
             game.undo_move(move) # Backtrack
             min_eval = min(min_eval, evaluation)
@@ -42,7 +43,7 @@ def get_best_move(game, depth):
     best_score = -math.inf
     move = None
     for m in game.available_moves():
-        game.make_move(m, "O")
+        game.make_move(m, config.AI)
         score = minimax(game, depth, -math.inf, math.inf, False)
         game.undo_move(m)
         if score > best_score:

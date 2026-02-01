@@ -1,3 +1,5 @@
+import config
+
 class TicTacToe:
     """
     Represents a Tic-Tac-Toe game on a 3x3 grid.
@@ -54,4 +56,4 @@ class TicTacToe:
         """
         Returns True if the board is full and no one has won.
         """
-        return " " not in self.board and not self.check_winner("X") and not self.check_winner("O")
+        return " " not in self.board and not self.check_winner(config.USER) and not self.check_winner(config.AI)

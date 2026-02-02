@@ -2,20 +2,29 @@ import config
 
 class ConnectFour:
     """
-    Represents a Connect Four game on a 6x7 grid.
-    Uses a 2D list to represent rows and columns.
+    Logic and rendering for the Connect Four game.
     """
     def __init__(self):
+        """
+        Initializes an empty board and tracking variables.
+        """
         self.rows, self.cols = 6, 7
         self.board = [[" " for _ in range(self.cols)] for _ in range(self.rows)]
+        self.last_move = None
 
     def print_board(self):
         """
-        Prints the grid with column indices at the bottom.
-        Displays the current state of the board to the console.
+        Renders the grid with color support for highlights.
         """
-        for row in self.board:
-            print("| " + " | ".join(row) + " |")
+        for r in range(self.rows):
+            row_str = "|"
+            for c in range(self.cols):
+                cell = self.board[r][c]
+                if self.last_move == (r, c) and cell != " ":
+                    row_str += f" {config.RED}{cell}{config.RESET} |"
+                else:
+                    row_str += f" {cell} |"
+            print(row_str)
         print("-" * 29)
         print("  " + "   ".join(map(str, range(self.cols))))
 
@@ -25,16 +34,22 @@ class ConnectFour:
         """
         return [c for c in range(self.cols) if self.board[0][c] == " "]
 
-    def make_move(self, col, player):
+    def make_move(self, col, player, real_move=True):
         """
-        Places the piece in the lowest available row of a column.
-        Returns True if successful, False if the column is full.
+        Places a move in the specified column.
+        Args:
+            col: Column index where the piece is to be placed.
+            player: The player symbol (config.USER or config.AI).
+            real_move: If True, tracks the move for visual highlighting.
+        Returns:
+            True if the move was successful, False otherwise.
         """
         if col < 0 or col >= self.cols or self.board[0][col] != " ":
             return False
         for r in range(self.rows - 1, -1, -1):
             if self.board[r][col] == " ":
                 self.board[r][col] = player
+                self.last_move = (r, col) # Store row and column
                 return True
         return False
 
@@ -46,11 +61,16 @@ class ConnectFour:
         for r in range(self.rows):
             if self.board[r][col] != " ":
                 self.board[r][col] = " "
+                self.last_move = None
                 break
 
     def check_winner(self, p):
         """
-        Checks for 4 connected pieces of player 'p' in all directions.
+        Searches for 4 in a row and saves coordinates to winning_line.
+        Args:
+            p: The player symbol to check for a win (config.USER or config.AI).
+        Returns:
+            True if player p has won, False otherwise.
         """
         # Horizontal
         for r in range(self.rows):

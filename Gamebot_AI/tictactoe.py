@@ -2,19 +2,31 @@ import config
 
 class TicTacToe:
     """
-    Represents a Tic-Tac-Toe game on a 3x3 grid.
-    The board is represented as a 1D list of 9 strings.
+    Logic and rendering for the Tic-Tac-Toe game.
     """
     def __init__(self):
+        """
+        Initializes an empty board and tracking variables.
+        """
         self.board = [" " for _ in range(9)]
-        self.rows, self.cols = 3, 3 # Required for AI compatibility
+        self.last_move = None
 
     def print_board(self):
         """
-        Displays the current state of the board to the console.
+        Prints the board with colored highlights for AI moves and winning lines.                
         """
         for i in range(0, 9, 3):
-            print(f" {self.board[i]} | {self.board[i+1]} | {self.board[i+2]} ")
+            row_display = []
+            for j in range(3):
+                idx = i + j
+                cell = self.board[idx]
+                # If this cell was the last move, wrap it in red tags
+                if idx == self.last_move and cell != " ":
+                    row_display.append(f"{config.RED}{cell}{config.RESET}")
+                else:
+                    row_display.append(cell)
+            
+            print(f" {row_display[0]} | {row_display[1]} | {row_display[2]} ")
             if i < 6: print("---+---+---")
 
     def available_moves(self):
@@ -23,13 +35,19 @@ class TicTacToe:
         """
         return [i for i, spot in enumerate(self.board) if spot == " "]
 
-    def make_move(self, position, player):
+    def make_move(self, position, player, real_move=True):
         """
-        Places a player's symbol on the board.
-        Returns True if successful, False if the spot was taken.
+        Places a move and optionally tracks it for visual highlighting.
+        Args:
+            position: Board index (0-8) where the move is to be placed.
+            player: The player symbol (config.USER or config.AI).
+            real_move: If True, tracks the move for visual highlighting.
+        Returns:
+            True if the move was successful, False otherwise.
         """
         if self.board[position] == " ":
             self.board[position] = player
+            self.last_move = position # Track the move
             return True
         return False
 
@@ -39,11 +57,15 @@ class TicTacToe:
         Used by the AI to simulate games.
         """
         self.board[position] = " "
+        self.last_move = None
 
     def check_winner(self, p):
         """
-        Checks if the given player (p) has 3 in a row.
-        Includes horizontal, vertical, and diagonal checks.
+        Checks if player p has won and stores the winning line.
+        Args:
+            p: The player symbol to check for a win (config.USER or config.AI).
+        Returns:
+            True if player p has won, False otherwise.
         """
         win_configs = [
             (0,1,2), (3,4,5), (6,7,8), # Rows

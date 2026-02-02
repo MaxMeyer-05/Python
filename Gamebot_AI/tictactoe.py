@@ -8,7 +8,8 @@ class TicTacToe:
         """
         Initializes an empty board and tracking variables.
         """
-        self.board = [" " for _ in range(9)]
+        self.rows, self.cols = 3, 3
+        self.board = [[" " for _ in range(self.cols)] for _ in range(self.rows)]
         self.last_move = None
 
     def print_board(self):
@@ -19,9 +20,9 @@ class TicTacToe:
             row_display = []
             for j in range(3):
                 idx = i + j
-                cell = self.board[idx]
+                cell = self.board[idx // 3][idx % 3]
                 # If this cell was the last move, wrap it in red tags
-                if idx == self.last_move and cell != " ":
+                if self.last_move and self.last_move == (idx // 3, idx % 3) and cell != " ":
                     row_display.append(f"{config.RED}{cell}{config.RESET}")
                 else:
                     row_display.append(cell)
@@ -33,7 +34,12 @@ class TicTacToe:
         """
         Returns a list of indices (0-8) that are currently empty.
         """
-        return [i for i, spot in enumerate(self.board) if spot == " "]
+        moves = []
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if self.board[r][c] == " ":
+                    moves.append(r * self.cols + c)
+        return moves
 
     def make_move(self, position, player, real_move=True):
         """
@@ -45,9 +51,10 @@ class TicTacToe:
         Returns:
             True if the move was successful, False otherwise.
         """
-        if self.board[position] == " ":
-            self.board[position] = player
-            self.last_move = position # Track the move
+        r, c = position // self.cols, position % self.cols
+        if self.board[r][c] == " ":
+            self.board[r][c] = player
+            self.last_move = (r, c) # Track the move
             return True
         return False
 
@@ -56,7 +63,8 @@ class TicTacToe:
         Removes a move from the board.
         Used by the AI to simulate games.
         """
-        self.board[position] = " "
+        r, c = position // self.cols, position % self.cols
+        self.board[r][c] = " "
         self.last_move = None
 
     def check_winner(self, p):
@@ -72,10 +80,10 @@ class TicTacToe:
             (0,3,6), (1,4,7), (2,5,8), # Columns
             (0,4,8), (2,4,6)           # Diagonals
         ]
-        return any(all(self.board[i] == p for i in config) for config in win_configs)
+        return any(all(self.board[i // 3][i % 3] == p for i in config) for config in win_configs)
 
     def is_draw(self):
         """
         Returns True if the board is full and no one has won.
         """
-        return " " not in self.board and not self.check_winner(config.USER) and not self.check_winner(config.AI)
+        return all(self.board[r][c] != " " for r in range(self.rows) for c in range(self.cols)) and not self.check_winner(config.USER) and not self.check_winner(config.AI)

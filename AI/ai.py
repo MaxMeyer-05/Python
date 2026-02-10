@@ -1,6 +1,9 @@
 import math
 import config
 
+from tictactoe import TicTacToeGame
+from connectFour import ConnectFourGame
+
 def minimax(game, depth, alpha, beta, is_maximizing):
     """
     Minimax algorithm with Alpha-Beta pruning to find the best move.

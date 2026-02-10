@@ -1,8 +1,8 @@
 import config
 
-from difflib import get_close_matches
 from tictactoe import TicTacToe
 from connectFour import ConnectFour
+from difflib import get_close_matches
 from ai import get_best_move
 
 def play_loop(game, depth):

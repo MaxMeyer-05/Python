@@ -8,7 +8,7 @@ def play_loop(game, depth):
         game: An instance of the game class.
         depth: Search depth for the AI's minimax algorithm.
     """
-    print(f"Starte {game.__name__}...")
+    print(f"Start {type(game).__name__}...")
 
     game.print_board()
     

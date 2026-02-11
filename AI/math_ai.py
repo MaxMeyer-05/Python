@@ -2,8 +2,6 @@ import re
 
 class MathAI:
     def solve(self, text):
-        # Extrahiert nur Zahlen und mathematische Symbole
-        # Beispiel: "Was ist 10 + 5?" -> "10+5"
         expression = re.sub(r'[^0-9+\-*/.]', '', text)
         try:
             if expression:

@@ -1,8 +1,8 @@
 import math
-import config
 
-from tictactoe import TicTacToeGame
-from connectFour import ConnectFourGame
+from Games import config
+from Games.tictactoe import TicTacToe
+from Games.connectFour import ConnectFour
 
 def minimax(game, depth, alpha, beta, is_maximizing):
     """

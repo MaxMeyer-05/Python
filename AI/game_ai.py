@@ -1,6 +1,6 @@
 import math
+import config
 
-from Games import config
 from Games.tictactoe import TicTacToe
 from Games.connectFour import ConnectFour
 

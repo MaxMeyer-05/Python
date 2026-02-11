@@ -1,4 +1,4 @@
-from Games import config
+import config
 
 class TicTacToe:
     """

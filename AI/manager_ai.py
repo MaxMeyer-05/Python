@@ -9,39 +9,46 @@ class ManagerAI:
         """
         An orchestrator that interprets user input to determine which 
         sub-application (Game or Tool) should be launched.
+        Args:
+            available_apps (list): A list of strings representing the keys of available applications.
         """
         self.apps = available_apps
 
         # Mapping intents to lists of descriptive keywords for fuzzy/exact matching
         self.keywords = {
-            "tic tac toe": ["tictactoe", "ttt", "tic tac toe", "play"],
-            "connect four": ["vier gewinnt", "connect4", "c4", "viererreihe"],
-            "calculator": ["calculate", "math", "plus", "minus", "summe"]
+            "tic tac toe": ["tictactoe", "ttt", "tic tac toe"],
+            "connect four": ["connect4", "c4", "connect four"],
+            "calculator": ["plus", "minus", "sum", "divide", "times"]
         }
 
     def get_intent(self, user_input):
         """
         Analyzes the user's message and returns the matching application key.
-        
+        Args:
+            user_input (str): The raw input string from the user.
         Returns:
             str: The key of the detected app, or None if no match is found.
         """
         user_input = user_input.lower()
         
-        # 1. Exact keyword matching
-        for app_name, synonyms in self.keywords.items():
-            if any(s in user_input for s in synonyms):
-                return app_name
+        # 1. STEP: Check if any keyword is directly PART of the sentence
+        for intent, keys in self.keywords.items():
+            for k in keys:
+                if k in user_input:
+                    return intent
         
-        # 2. Fuzzy matching to handle typos (e.g. "TiktakTo")
-        all_synonyms = [s for syn_list in self.keywords.values() for s in syn_list]
+        # 2. STEP: If no direct match, check individual words (Fuzzy Matching)
         words = user_input.split()
-        for word in words:
-            match = get_close_matches(word, all_synonyms, n=1, cutoff=0.6)
-            if match:
-                # Find which intent the matched keyword belongs to
-                for app_name, synonyms in self.keywords.items():
-                    if match[0] in synonyms:
-                        return app_name
+        all_keys = [k for keys in self.keywords.values() for k in keys]
         
+        for word in words:
+            # We only match words with a certain length to avoid false positives
+            if len(word) < 3: continue 
+            
+            matches = get_close_matches(word, all_keys, n=1, cutoff=0.7)
+            if matches:
+                for intent, keys in self.keywords.items():
+                    if matches[0] in keys:
+                        return intent
+                        
         return None

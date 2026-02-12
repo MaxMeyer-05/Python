@@ -16,12 +16,12 @@ def main():
     apps = {
         "tic tac toe": lambda msg: play_loop(TicTacToe(), 9),
         "connect four": lambda msg: play_loop(ConnectFour(), 5),
-        "calculator": lambda msg: print(f"[KI]: {math_ai.solve(msg)}")
+        "calculator": lambda msg: print(f"\n[AI]: {math_ai.solve(msg)}")
     }
 
     manager = ManagerAI(list(apps.keys()))
 
-    print("\n[KI]: Hello! I'm ready to help you. What would you like to do?")
+    print("\n[AI]: Hello! I'm ready to help you. What would you like to do?")
     
     while True:
         user_msg = input("\nYou: ")
@@ -33,7 +33,7 @@ def main():
         if intent in apps:
             apps[intent](user_msg)
         else:
-            print("[KI]: I don't understand. Do you want to play a game or do some math?")
+            print("\n[AI]: I don't understand. Do you want to play a game or do some math?")
 
 if __name__ == "__main__":
     main()

@@ -5,8 +5,14 @@ from Games.tictactoe import TicTacToe
 from Games.connectFour import ConnectFour
 
 def main():
+    """
+    Main entry point of the application. 
+    Handles the high-level routing using a command-dispatch dictionary.
+    """
     math_ai = MathAI()
     
+    # Dispatcher dictionary using lambdas to delay execution until called
+    # msg is passed so the calculator can extract the numbers from it
     apps = {
         "tic tac toe": lambda msg: play_loop(TicTacToe(), 9),
         "connect four": lambda msg: play_loop(ConnectFour(), 5),
@@ -21,6 +27,7 @@ def main():
         user_msg = input("\nYou: ")
         if user_msg.lower() in ["exit", "ende", "bye"]: break
 
+        # Determine what the user wants to do based on their message
         intent = manager.get_intent(user_msg)
 
         if intent in apps:

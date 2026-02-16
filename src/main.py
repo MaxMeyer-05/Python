@@ -3,12 +3,14 @@ from ai_modules.math_ai import MathAI
 from core.engine import play_loop
 from games.tictactoe import TicTacToe
 from games.connect_four import ConnectFour
+from core.games_manager import StatsManager
 
 def main():
     """
     Main entry point of the application. 
     Handles the high-level routing using a command-dispatch dictionary.
     """
+    stats_mgr = StatsManager()
     math_ai = MathAI()
     
     # Dispatcher dictionary using lambdas to delay execution until called
@@ -16,8 +18,9 @@ def main():
     apps = {
         "tic tac toe": lambda msg: play_loop(TicTacToe(), 9),
         "connect four": lambda msg: play_loop(ConnectFour(), 5),
-        "calculator": lambda msg: print(f"\n[AI]: {math_ai.solve(msg)}")
-    }
+        "calculator": lambda msg: print(f"\n[AI]: {math_ai.solve(msg)}"),
+        "stats": lambda msg: print(f"\n[AI]: {stats_mgr.get_dynamic_answer(msg)}")        
+        }
 
     manager = ManagerAI(list(apps.keys()))
 
@@ -33,7 +36,7 @@ def main():
         if intent in apps:
             apps[intent](user_msg)
         else:
-            print("\n[AI]: I don't understand. Do you want to play a game or do some math?")
+            print("\n[AI]: I don't understand. Please ask about stats, play a game, or do a calculation.")
 
 if __name__ == "__main__":
     main()

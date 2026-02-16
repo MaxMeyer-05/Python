@@ -1,3 +1,4 @@
+from email.mime import text
 import re
 
 class MathAI:
@@ -7,7 +8,7 @@ class MathAI:
     """
     def __init__(self):
         # Mapping English words to mathematical operators
-        self.word_to_operator = {
+        self.operators = {
             "plus": "+",
             "minus": "-",
             "times": "*",
@@ -21,12 +22,18 @@ class MathAI:
             text (str): The input string containing the math problem in natural language.
         Returns:
             str: The result of the calculation or an error message.
-        """
+        """    
         # 1. Standardize text
         expr = text.lower().strip()
 
+        has_digits = any(char.isdigit() for char in text)
+        has_operators = any(word in expr for word in self.operators.keys())
+        
+        if not (has_digits or has_operators):
+            return None
+        
         # 2. Replace words with math-readable characters
-        for word, replacement in self.word_to_operator.items():
+        for word, replacement in self.operators.items():
             expr = expr.replace(word, replacement)
 
         # 3. Filter: Keep only numbers, operators, dots, and parentheses

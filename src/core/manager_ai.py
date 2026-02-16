@@ -1,4 +1,4 @@
-from difflib import get_close_matches
+import re
 
 class ManagerAI:
     """
@@ -14,11 +14,28 @@ class ManagerAI:
         """
         self.apps = available_apps
 
-        # Mapping intents to lists of descriptive keywords for fuzzy/exact matching
+        # Define keywords for each app to help with intent recognition
         self.keywords = {
-            "tic tac toe": ["tictactoe", "ttt", "tic tac toe"],
-            "connect four": ["connect4", "c4", "connect four"],
-            "calculator": ["plus", "minus", "sum", "divide", "times"]
+            "stats": {
+                "strong_markers": ["win", "lose", "score", "record", "stats", "draw", "tie"],
+                "soft_markers": ["how", "many", "times", "total", "number", "did", "i"],
+                "priority": 3  # Highest priority
+            },
+            "calculator": {
+                "strong_markers": ["plus", "minus", "times", "divided", "calculate", "sum", "root"],
+                "soft_markers": ["is", "what", "total", "result", "number"],
+                "priority": 1  # Lower priority for general questions
+            },
+            "tic tac toe": {
+                "strong_markers": ["ttt", "tic", "tac", "toe"],
+                "soft_markers": ["play", "game", "start"],
+                "priority": 2
+            },
+            "connect four": {
+                "strong_markers": ["c4", "connect", "four", "vier", "gewinnt"],
+                "soft_markers": ["play", "game", "start"],
+                "priority": 2
+            }
         }
 
     def get_intent(self, user_input):
@@ -29,26 +46,23 @@ class ManagerAI:
         Returns:
             str: The key of the detected app, or None if no match is found.
         """
-        user_input = user_input.lower()
+        msg = user_input.lower()
+        words = re.sub(r'[^a-z0-9\s]', '', msg).split()
+
+        scores = {intent: 0 for intent in self.keywords}
         
-        # 1. STEP: Check if any keyword is directly PART of the sentence
-        for intent, keys in self.keywords.items():
-            for k in keys:
-                if k in user_input:
-                    return intent
+        # 1. STEP: Check for strong and soft markers in the message
+        for intent, data in self.keywords.items():
+            for word in words:
+                if word in data["strong_markers"]:
+                    scores[intent] += 10 * data["priority"]
+                if word in data["soft_markers"]:
+                    scores[intent] += 1 * data["priority"]
         
-        # 2. STEP: If no direct match, check individual words (Fuzzy Matching)
-        words = user_input.split()
-        all_keys = [k for keys in self.keywords.values() for k in keys]
+        # 2. STEP: Apply some hard rules for edge cases (e.g., if "win" is mentioned, it's likely about stats)
+        if any(w in words for w in self.keywords["stats"]["strong_markers"]):
+            scores["calculator"] = 0
+            scores["stats"] += 20                        
         
-        for word in words:
-            # We only match words with a certain length to avoid false positives
-            if len(word) < 3: continue 
-            
-            matches = get_close_matches(word, all_keys, n=1, cutoff=0.7)
-            if matches:
-                for intent, keys in self.keywords.items():
-                    if matches[0] in keys:
-                        return intent
-                        
-        return None
+        best_intent = max(scores, key=scores.get)
+        return best_intent if scores[best_intent] > 0 else None

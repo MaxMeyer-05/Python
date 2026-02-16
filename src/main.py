@@ -1,8 +1,8 @@
-from AI.manager_ai import ManagerAI
-from AI.math_ai import MathAI
-from Games.engine import play_loop
-from Games.tictactoe import TicTacToe
-from Games.connectFour import ConnectFour
+from core.manager_ai import ManagerAI
+from ai_modules.math_ai import MathAI
+from core.engine import play_loop
+from games.tictactoe import TicTacToe
+from games.connect_four import ConnectFour
 
 def main():
     """

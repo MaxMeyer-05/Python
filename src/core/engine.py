@@ -1,5 +1,5 @@
-import config
-from AI.game_ai import get_best_move
+import config as config
+from ai_modules.game_ai import get_best_move
 
 def play_loop(game, depth):
     """
